@@ -1,4 +1,4 @@
-import { Eye, Heart, MessageSquare, Repeat2, Sparkles, Meh, Image as ImageIcon } from "lucide-react";
+import { Eye, Heart, MessageSquare, Repeat2, Sparkles, Meh, Info, Image as ImageIcon } from "lucide-react";
 
 export type SnippetProps = {
   handle: string;
@@ -86,16 +86,23 @@ export default function Snippet({
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px]">
         <Metric icon={<Eye className="h-4 w-4" strokeWidth={1.75} />} value={metrics.views} />
         <span className="text-[#d1d5db]">•</span>
+        <Metric icon={<Sparkles className="h-4 w-4" strokeWidth={1.75} />} value={metrics.stars} />
         <span className="relative group inline-flex items-center">
-          <span className="inline-flex items-center gap-1 text-[#6b7280] cursor-help">
-            <Sparkles className="h-4 w-4" strokeWidth={1.75} />
-            <span className="text-[13px]">{metrics.stars}</span>
-          </span>
+          <button
+            type="button"
+            aria-label="Engagement estimate details"
+            className="inline-flex items-center text-[#6b7280] hover:text-[#374151] focus:outline-none focus-visible:text-[#374151]"
+          >
+            <Info className="h-4 w-4" strokeWidth={1.75} />
+          </button>
           <div
             role="tooltip"
             className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-64 -translate-x-1/2 rounded-lg border border-[#e5e7eb] bg-white p-3 text-left text-[12px] text-[#374151] opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
           >
-            <div className="flex items-center justify-between gap-2 py-0.5">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-[#6b7280]">
+              Engagement
+            </div>
+            <div className="mt-1 flex items-center justify-between gap-2 py-0.5">
               <span className="inline-flex items-center gap-1.5 text-[#6b7280]">
                 <Heart className="h-3.5 w-3.5" strokeWidth={1.75} />
                 Likes
@@ -116,8 +123,14 @@ export default function Snippet({
               </span>
               <span className="font-medium text-[#111827]">{metrics.reposts}</span>
             </div>
-            <p className="mt-2 border-t border-[#f3f4f6] pt-2 text-[11px] leading-snug text-[#6b7280]">
+            <p className="mt-2 text-[11px] leading-snug text-[#6b7280]">
               Pendulum estimates engagement when not present. Estimates are replaced by actual values when available.
+            </p>
+            <div className="mt-3 border-t border-[#f3f4f6] pt-2 text-[11px] font-semibold uppercase tracking-wide text-[#6b7280]">
+              Impressions
+            </div>
+            <p className="mt-1 text-[11px] leading-snug text-[#6b7280]">
+              Pendulum estimates impressions when actual data in not available. Estimates are replaced with real values when present.
             </p>
           </div>
         </span>
