@@ -123,9 +123,12 @@ function SentimentControl({ aiSentiment }: { aiSentiment: Sentiment }) {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center justify-center rounded-full p-0.5 hover:bg-[#eef0f3] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c7d2fe]"
+        className="inline-flex items-center gap-1.5 rounded-full px-1.5 py-0.5 hover:bg-[#eef0f3] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c7d2fe]"
       >
         <CurrentIcon className="h-5 w-5" strokeWidth={1.75} style={{ color: currentColor }} />
+        <span className="text-[13px] font-medium" style={{ color: currentColor }}>
+          {SENTIMENT_META[current].label}
+        </span>
       </button>
 
       {open && (
