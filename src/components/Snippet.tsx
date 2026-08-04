@@ -231,13 +231,13 @@ export default function Snippet({
               <span className="font-medium text-[#111827]">{metrics.reposts}</span>
             </div>
             <p className="mt-2 text-[11px] leading-snug text-[#6b7280]">
-              Pendulum estimates engagement when not present. Estimates are replaced by actual values when available.
+              Pendulum estimates engagement when not present. Estimates are derived from follower count and past engagement, and are replaced by actual values when available.
             </p>
             <div className="mt-3 border-t border-[#f3f4f6] pt-2 text-[11px] font-semibold uppercase tracking-wide text-[#6b7280]">
               Impressions
             </div>
             <p className="mt-1 text-[11px] leading-snug text-[#6b7280]">
-              Pendulum estimates impressions when actual data in not available. Estimates are replaced with real values when present.
+              Pendulum estimates impressions when actual data in not available. Estimates are derived from follower count and past impressions, and are replaced with real values when present.
             </p>
           </div>
         </span>
