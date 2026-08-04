@@ -1,4 +1,20 @@
-import { Eye, Heart, MessageSquare, Repeat2, Sparkles, Meh, Info, Image as ImageIcon } from "lucide-react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import {
+  Eye,
+  Heart,
+  MessageSquare,
+  Repeat2,
+  Sparkles,
+  Smile,
+  Meh,
+  Frown,
+  Info,
+  Image as ImageIcon,
+} from "lucide-react";
+
+export type Sentiment = "positive" | "neutral" | "negative";
 
 export type SnippetProps = {
   handle: string;
@@ -13,7 +29,17 @@ export type SnippetProps = {
     reposts: number;
     stars: number;
   };
+  sentiment: Sentiment;
   tag?: string;
+};
+
+const SENTIMENT_META: Record<
+  Sentiment,
+  { icon: typeof Smile; color: string; label: string }
+> = {
+  positive: { icon: Smile, color: "#16a34a", label: "Positive" },
+  neutral: { icon: Meh, color: "#6b7280", label: "Neutral" },
+  negative: { icon: Frown, color: "#dc2626", label: "Negative" },
 };
 
 function InstagramIcon() {
@@ -61,32 +87,113 @@ function Metric({ icon, value }: { icon: React.ReactNode; value: number | string
   );
 }
 
+function SentimentControl({ aiSentiment }: { aiSentiment: Sentiment }) {
+  const [current, setCurrent] = useState<Sentiment>(aiSentiment);
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDocClick(e: MouseEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const CurrentIcon = SENTIMENT_META[current].icon;
+  const currentColor = SENTIMENT_META[current].color;
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
+        aria-label={`Sentiment: ${SENTIMENT_META[current].label}. Click to change.`}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center justify-center rounded-full p-0.5 hover:bg-[#eef0f3] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c7d2fe]"
+      >
+        <CurrentIcon className="h-5 w-5" strokeWidth={1.75} style={{ color: currentColor }} />
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full z-20 mt-2 w-48 overflow-hidden rounded-xl border border-[#e5e7eb] bg-white p-1 shadow-lg"
+        >
+          {(Object.keys(SENTIMENT_META) as Sentiment[]).map((key) => {
+            const meta = SENTIMENT_META[key];
+            const Icon = meta.icon;
+            const isCurrent = key === current;
+            const isAi = key === aiSentiment;
+            return (
+              <button
+                key={key}
+                type="button"
+                role="menuitemradio"
+                aria-checked={isCurrent}
+                onClick={() => {
+                  setCurrent(key);
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-[13px] hover:bg-[#f3f4f6] ${
+                  isCurrent ? "bg-[#f3f4f6]" : ""
+                }`}
+              >
+                <Icon className="h-4 w-4" strokeWidth={1.75} style={{ color: meta.color }} />
+                <span className="text-[#111827]">{meta.label}</span>
+                {isAi && (
+                  <span className="ml-auto text-[11px] font-medium text-[#6b7280]">AI</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Snippet({
   handle,
   username,
   timestamp,
   body,
   metrics,
+  sentiment,
   tag = "Caption",
 }: SnippetProps) {
   const displayUsername = username ?? handle;
   return (
     <div className="rounded-2xl border border-[#e5e7eb] bg-[#f7f8fa] px-5 py-4 shadow-[0_1px_2px_rgba(0,0,0,0.02)] max-w-[720px]">
-      <div className="flex items-center gap-2 text-[14px]">
-        <PenguinAvatar />
-        <span className="font-semibold text-[#111827]">{displayUsername}</span>
-        <InstagramIcon />
-        <span className="text-[#6b7280]">@{handle}</span>
-        <span className="text-[#9ca3af]">•</span>
-        <span className="text-[#6b7280]">{timestamp}</span>
+      <div className="flex items-start gap-2 text-[14px]">
+        <div className="flex flex-1 items-center gap-2 min-w-0">
+          <PenguinAvatar />
+          <span className="font-semibold text-[#111827]">{displayUsername}</span>
+          <InstagramIcon />
+          <span className="text-[#6b7280]">@{handle}</span>
+          <span className="text-[#9ca3af]">•</span>
+          <span className="text-[#6b7280]">{timestamp}</span>
+        </div>
+        <SentimentControl aiSentiment={sentiment} />
       </div>
 
       <p className="mt-3 text-[15px] leading-[1.55] text-[#111827]">{body}</p>
 
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px]">
-        <Metric icon={<Eye className="h-4 w-4" strokeWidth={1.75} />} value={metrics.views} />
+        <Metric icon={<Eye className="h-4 w-4" strokeWidth={1.75} />} value={`${metrics.views} Impressions`} />
         <span className="text-[#d1d5db]">•</span>
-        <Metric icon={<Sparkles className="h-4 w-4" strokeWidth={1.75} />} value={metrics.stars} />
+        <Metric icon={<Sparkles className="h-4 w-4" strokeWidth={1.75} />} value={`${metrics.stars} Engagement`} />
         <span className="relative group inline-flex items-center">
           <button
             type="button"
@@ -134,8 +241,6 @@ export default function Snippet({
             </p>
           </div>
         </span>
-        <span className="text-[#d1d5db]">•</span>
-        <Meh className="h-4 w-4 text-[#6b7280]" strokeWidth={1.75} />
         <span className="ml-1 inline-flex items-center gap-1 rounded-md bg-[#e6f4ea] px-2 py-0.5 text-[12px] text-[#166534]">
           <ImageIcon className="h-3.5 w-3.5" strokeWidth={1.75} />
           {tag}
