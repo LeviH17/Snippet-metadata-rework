@@ -78,6 +78,8 @@ function PenguinAvatar() {
   );
 }
 
+const fmt = (n: number) => (n < 0 ? "N/A" : String(n));
+
 function Metric({ icon, value }: { icon: React.ReactNode; value: number | string }) {
   return (
     <span className="inline-flex items-center gap-1 text-[#6b7280]">
@@ -191,9 +193,9 @@ export default function Snippet({
       <p className="mt-3 text-[15px] leading-[1.55] text-[#111827]">{body}</p>
 
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px]">
-        <Metric icon={<Eye className="h-4 w-4" strokeWidth={1.75} />} value={`${metrics.views} Impressions`} />
+        <Metric icon={<Eye className="h-4 w-4" strokeWidth={1.75} />} value={`${fmt(metrics.views)} Impressions`} />
         <span className="text-[#d1d5db]">•</span>
-        <Metric icon={<Sparkles className="h-4 w-4" strokeWidth={1.75} />} value={`${metrics.stars} Engagement`} />
+        <Metric icon={<Sparkles className="h-4 w-4" strokeWidth={1.75} />} value={`${fmt(metrics.stars)} Engagement`} />
         <span className="relative group inline-flex items-center">
           <button
             type="button"
@@ -214,21 +216,21 @@ export default function Snippet({
                 <Heart className="h-3.5 w-3.5" strokeWidth={1.75} />
                 Likes
               </span>
-              <span className="font-medium text-[#111827]">{metrics.likes}</span>
+              <span className="font-medium text-[#111827]">{fmt(metrics.likes)}</span>
             </div>
             <div className="flex items-center justify-between gap-2 py-0.5">
               <span className="inline-flex items-center gap-1.5 text-[#6b7280]">
                 <MessageSquare className="h-3.5 w-3.5" strokeWidth={1.75} />
                 Comments
               </span>
-              <span className="font-medium text-[#111827]">{metrics.comments}</span>
+              <span className="font-medium text-[#111827]">{fmt(metrics.comments)}</span>
             </div>
             <div className="flex items-center justify-between gap-2 py-0.5">
               <span className="inline-flex items-center gap-1.5 text-[#6b7280]">
                 <Repeat2 className="h-3.5 w-3.5" strokeWidth={1.75} />
                 Reposts
               </span>
-              <span className="font-medium text-[#111827]">{metrics.reposts}</span>
+              <span className="font-medium text-[#111827]">{fmt(metrics.reposts)}</span>
             </div>
             <p className="mt-2 text-[11px] leading-snug text-[#6b7280]">
               Pendulum estimates engagement when not present. Estimates are derived from follower count and past engagement, and are replaced by actual values when available.
